@@ -1,0 +1,21 @@
+const toSnake = (obj: Record<string, any>) => {
+  const out: Record<string, any> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined) continue;
+    const snake = k.replace(/[A-Z]/g, (ch) => `_${ch.toLowerCase()}`);
+    out[snake] = v;
+  }
+  return out;
+};
+
+const toCamel = (obj: Record<string, any>) => {
+  const out: Record<string, any> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined) continue;
+    const camel = k.replace(/_([a-z])/g, (_, ch) => ch.toUpperCase());
+    out[camel] = v;
+  }
+  return out;
+};
+
+export { toSnake, toCamel };

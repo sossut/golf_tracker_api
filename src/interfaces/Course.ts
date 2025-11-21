@@ -1,11 +1,11 @@
 import { RowDataPacket } from 'mysql2';
-import { ClubEstablishment } from './ClubEstablishment';
+import { Establishment } from './Establishment';
 import { Tee } from './Tee';
 
 interface Course {
   courseId: number;
   courseName: string;
-  clubId: number | ClubEstablishment;
+  clubId: number | Establishment;
   scorecard?: string;
   par: number;
   tees: Tee[];

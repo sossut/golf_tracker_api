@@ -11,7 +11,7 @@ interface User {
   updatedAt: Date;
   role: 'admin' | 'user';
   hcp: number;
-  clubs: UserClub[];
+  clubs?: UserClub[];
 }
 
 interface GetUser extends RowDataPacket, User {}

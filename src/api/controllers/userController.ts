@@ -12,6 +12,14 @@ import bcrypt from 'bcryptjs';
 import { User, PostUser } from '../../interfaces/User';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
+import { UserClub } from '../../interfaces/UserClub';
+import {
+  checkIfUserHasClub,
+  getUserClubByUserIdAndClubId,
+  postUserClub,
+  putUserClub
+} from '../models/userClubModel';
+import { toCamel } from '../../utils/utilities';
 
 const salt = bcrypt.genSaltSync(12);
 
@@ -43,6 +51,7 @@ const userPost = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const messages = errors
@@ -57,6 +66,11 @@ const userPost = async (
       throw new CustomError(messages, 400);
     }
     const { password } = req.body;
+    if (!req.body.hcp) {
+      req.body.hcp = 540;
+    } else {
+      req.body.hcp = Number(req.body.hcp) * 10;
+    }
 
     req.body.password = bcrypt.hashSync(password, salt);
     console.log('userPost req.body', req.body);
@@ -91,11 +105,75 @@ const userPut = async (
 
       throw new CustomError(messages, 400);
     }
-    if ((req.user as User).role !== 'admin') {
+    const u = toCamel(req.user as User);
+    if (u.role === 'admin' || u.userId == req.params.id) {
+      const user = req.body;
+      const clubs = user.clubs;
+      if (clubs && clubs.length > 0) {
+        for (const club of clubs) {
+          console.log({ club });
+
+          try {
+            const check = await checkIfUserHasClub(req.params.id, club.clubId);
+            if (!check) {
+              const userClub: UserClub = {
+                userId: req.params.id,
+                clubId: club.clubId,
+                inBag: club.inBag
+              };
+              console.log({ userClub });
+              await postUserClub(userClub);
+            } else {
+              const userClub = await getUserClubByUserIdAndClubId(
+                req.params.id,
+                club.clubId
+              );
+              console.log({ userClub });
+              const userClubCamel = toCamel(userClub);
+              await putUserClub(club, userClubCamel.userClubId as number);
+            }
+          } catch (error) {
+            throw new CustomError('Error processing user clubs', 500);
+          }
+        }
+      }
+    } else {
       throw new CustomError('Unauthorized', 403);
     }
 
     const user = req.body;
+    const clubs = user.clubs;
+    if (clubs && clubs.length > 0) {
+      for (const club of clubs) {
+        console.log({ club });
+
+        try {
+          const check = await checkIfUserHasClub(req.params.id, club.clubId);
+          if (!check) {
+            const userClub: UserClub = {
+              userId: req.params.id,
+              clubId: club.clubId,
+              inBag: club.inBag
+            };
+            console.log({ userClub });
+            await postUserClub(userClub);
+          } else {
+            const userClub = await getUserClubByUserIdAndClubId(
+              req.params.id,
+              club.clubId
+            );
+            console.log({ userClub });
+            const userClubCamel = toCamel(userClub);
+            await putUserClub(club, userClubCamel.userClubId as number);
+          }
+        } catch (error) {
+          throw new CustomError('Error processing user clubs', 500);
+        }
+      }
+    }
+
+    delete user.clubs;
+
     const result = await putUser(user, req.params.id);
     if (result) {
       const message: MessageResponse = {
@@ -129,6 +207,38 @@ const userPutCurrent = async (
       throw new CustomError(messages, 400);
     }
     const user = req.body;
+    const clubs = user.clubs;
+    if (clubs && clubs.length > 0) {
+      for (const club of clubs) {
+        console.log({ club });
+
+        try {
+          const check = await checkIfUserHasClub(req.params.id, club.clubId);
+          if (!check) {
+            const userClub: UserClub = {
+              userId: req.params.id,
+              clubId: club.clubId,
+              inBag: club.inBag
+            };
+            console.log({ userClub });
+            await postUserClub(userClub);
+          } else {
+            const userClub = await getUserClubByUserIdAndClubId(
+              req.params.id,
+              club.clubId
+            );
+            console.log({ userClub });
+            const userClubCamel = toCamel(userClub);
+            await putUserClub(club, userClubCamel.userClubId as number);
+          }
+        } catch (error) {
+          throw new CustomError('Error processing user clubs', 500);
+        }
+      }
+    }
+
+    delete user.clubs;
+    console.log(user);
 
     const result = await putUser(user, req.params.id);
     if (result) {
