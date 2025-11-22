@@ -3,7 +3,7 @@ import { Point } from 'geojson';
 
 interface Establishment {
   establishmentId: number;
-  clubName: string;
+  establishmentName: string;
   location: Point;
   abbreviation: string;
   establishmentNumber: number;

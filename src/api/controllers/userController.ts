@@ -26,7 +26,16 @@ const salt = bcrypt.genSaltSync(12);
 const userListGet = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await getAllUsers();
-    res.json(users);
+    const camelCaseUsers = users.map((user) => toCamel(user));
+    camelCaseUsers.forEach((user) => {
+      if (user.hcp) {
+        user.hcp /= 10;
+        // if (user.hcp < 0) {
+        //   user.hcp = '+' + Math.abs(user.hcp);
+        // }
+      }
+    });
+    res.json(camelCaseUsers);
   } catch (error) {
     next(error);
   }
@@ -39,7 +48,11 @@ const userGet = async (
 ) => {
   try {
     const user = await getUser(req.params.id);
-    res.json(user);
+    const camelCaseUser = toCamel(user);
+    if (camelCaseUser.hcp) {
+      camelCaseUser.hcp /= 10;
+    }
+    res.json(camelCaseUser);
   } catch (error) {
     next(error);
   }

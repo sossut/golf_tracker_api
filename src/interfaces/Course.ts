@@ -5,9 +5,9 @@ import { Tee } from './Tee';
 interface Course {
   courseId: number;
   courseName: string;
-  clubId: number | Establishment;
+  establishmentId: number | Establishment;
   scorecard?: string;
-  par: number;
+  par?: number;
   tees: Tee[];
 }
 

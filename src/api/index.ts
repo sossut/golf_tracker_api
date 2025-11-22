@@ -5,6 +5,10 @@ import MessageResponse from '../interfaces/MessageResponse';
 import userRoute from './routes/userRoute';
 import authRoute from './routes/authRoute';
 import clubRoute from './routes/clubRoute';
+import establishmentRoute from './routes/establishmentRoute';
+import courseRoute from './routes/courseRoute';
+import holeRoute from './routes/holeRoute';
+import teeRoute from './routes/teeRoute';
 
 const router = express.Router();
 
@@ -19,5 +23,9 @@ router.get<{}, MessageResponse>('/', (req, res) => {
 router.use('/auth', authRoute);
 router.use('/user', userRoute);
 router.use('/club', clubRoute);
+router.use('/establishment', establishmentRoute);
+router.use('/course', courseRoute);
+router.use('/hole', holeRoute);
+router.use('/tee', teeRoute);
 
 export default router;

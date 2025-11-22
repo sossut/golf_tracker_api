@@ -87,6 +87,7 @@ const getUserClubsInBagByUserId = async (
   if (rows.length === 0) {
     throw new CustomError('User clubs in bag not found for this user', 404);
   }
+
   return rows;
 };
 

@@ -6,8 +6,8 @@ interface Tee {
   teeName: string;
   courseId: number | Course;
   length: number;
-  slope: number;
-  rating: number;
+  slopeRating: number;
+  courseRating: number;
 }
 
 interface GetTee extends RowDataPacket, Tee {}

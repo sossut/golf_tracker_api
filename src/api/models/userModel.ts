@@ -60,7 +60,11 @@ const getUser = async (id: string): Promise<User> => {
   if (rows.length === 0) {
     throw new CustomError('User not found', 404);
   }
-  return rows[0];
+  const users = rows.map((row) => ({
+    ...row,
+    clubs: JSON.parse(row.clubs?.toString() || '{}')
+  }));
+  return users[0];
 };
 
 const postUser = async (data: PostUser) => {
