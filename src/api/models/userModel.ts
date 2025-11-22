@@ -35,7 +35,7 @@ const getAllUsers = async (): Promise<User[]> => {
   return users;
 };
 
-const getUser = async (id: string): Promise<User> => {
+const getUser = async (id: number): Promise<User> => {
   const [rows] = await promisePool.execute<GetUser[]>(
     `SELECT users.user_id, user_name, email, role, created_at, updated_at, hcp,
     CONCAT('[',

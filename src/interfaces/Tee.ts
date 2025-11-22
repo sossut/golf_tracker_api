@@ -5,7 +5,6 @@ interface Tee {
   teeId: number;
   teeName: string;
   courseId: number | Course;
-  length: number;
   slopeRating: number;
   courseRating: number;
 }

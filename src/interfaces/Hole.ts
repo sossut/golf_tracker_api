@@ -1,12 +1,11 @@
 import { RowDataPacket } from 'mysql2';
 import { Course } from './Course';
-import { HoleLength } from './HoleLenght';
+import { HoleLength } from './HoleLength';
 import { Point } from 'geojson';
 
 interface Hole {
   holeId: number;
   holeNumber: number;
-  par: number;
   courseId: number | Course;
   greenCenterLocation?: Point;
   slopeIndex: number;

@@ -7,7 +7,7 @@ import { Point } from 'geojson';
 
 const getAllHoles = async (): Promise<Hole[]> => {
   const [rows] = await promisePool.query<GetHole[]>(
-    `SELECT hole_id, course_id, hole_number, par, slope_index, green_center_location
+    `SELECT hole_id, course_id, hole_number, slope_index, green_center_location
     FROM holes`
   );
   if (rows.length === 0) {
@@ -18,7 +18,7 @@ const getAllHoles = async (): Promise<Hole[]> => {
 
 const getHole = async (id: number): Promise<Hole> => {
   const [rows] = await promisePool.execute<GetHole[]>(
-    `SELECT hole_id, course_id, hole_number, par, slope_index, green_center_location
+    `SELECT hole_id, course_id, hole_number, slope_index, green_center_location
     FROM holes
     WHERE hole_id = ?`,
     [id]
@@ -27,6 +27,19 @@ const getHole = async (id: number): Promise<Hole> => {
     throw new CustomError('Hole not found', 404);
   }
   return rows[0];
+};
+
+const checkIfHoleExists = async (
+  courseId: number,
+  holeNumber: number
+): Promise<boolean> => {
+  const [rows] = await promisePool.execute<GetHole[]>(
+    `SELECT hole_id
+    FROM holes
+    WHERE course_id = ? AND hole_number = ?`,
+    [courseId, holeNumber]
+  );
+  return rows.length > 0;
 };
 
 const postHole = async (data: PostHole) => {
@@ -42,12 +55,11 @@ const postHole = async (data: PostHole) => {
   data.greenCenterLocation = greenCenter;
   const snakeData = toSnake(data);
   const [headers] = await promisePool.execute<ResultSetHeader>(
-    `INSERT INTO holes (course_id, hole_number, par, slope_index, green_center_location)
-    VALUES (?, ?, ?, ?, POINT(?, ?))`,
+    `INSERT INTO holes (course_id, hole_number, slope_index, green_center_location)
+    VALUES (?, ?, ?, POINT(?, ?))`,
     [
       snakeData.course_id,
       snakeData.hole_number,
-      snakeData.par,
       snakeData.slope_index,
       snakeData.green_center_location.coordinates[0],
       snakeData.green_center_location.coordinates[1]
@@ -78,4 +90,11 @@ const deleteHole = async (id: number): Promise<boolean> => {
   return true;
 };
 
-export { getAllHoles, getHole, postHole, putHole, deleteHole };
+export {
+  getAllHoles,
+  getHole,
+  checkIfHoleExists,
+  postHole,
+  putHole,
+  deleteHole
+};

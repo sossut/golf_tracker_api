@@ -7,6 +7,7 @@ interface HoleLength {
   teeId: number;
   length: number;
   teeBoxLocation: Point;
+  par: number;
 }
 
 interface GetHoleLength extends RowDataPacket, HoleLength {}

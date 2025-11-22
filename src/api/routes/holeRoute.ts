@@ -19,7 +19,6 @@ router
     passport.authenticate('jwt', { session: false }),
     body('courseId').isNumeric().notEmpty().escape(),
     body('holeNumber').isNumeric().notEmpty().escape(),
-    body('par').isNumeric().notEmpty().escape(),
     body('slopeIndex').isNumeric().notEmpty().escape(),
     holePost
   );
@@ -31,7 +30,6 @@ router
     param('id').isNumeric().notEmpty().escape(),
     body('courseId').isNumeric().optional({ nullable: true }).escape(),
     body('holeNumber').isNumeric().optional({ nullable: true }).escape(),
-    body('par').isNumeric().optional({ nullable: true }).escape(),
     body('slopeIndex').isNumeric().optional({ nullable: true }).escape(),
     holePut
   )

@@ -18,8 +18,7 @@ const getAllCourses = async (): Promise<Course[]> => {
           'tee_id', tees.tee_id,
           'tee_name', tees.tee_name, 
           'slope_rating', tees.slope_rating,
-          'course_rating', tees.course_rating,
-          'length', tees.length
+          'course_rating', tees.course_rating
         )
       ),
     ']'
@@ -47,8 +46,7 @@ const getCourse = async (id: number): Promise<Course> => {
           'tee_id', tees.tee_id,
           'tee_name', tees.tee_name, 
           'slope_rating', tees.slope_rating,
-          'course_rating', tees.course_rating,
-          'length', tees.length
+          'course_rating', tees.course_rating
         )
       ),
     ']'

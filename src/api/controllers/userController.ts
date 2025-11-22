@@ -42,12 +42,12 @@ const userListGet = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const userGet = async (
-  req: Request<{ id: string }, {}, {}>,
+  req: Request<{ id: number }, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const user = await getUser(req.params.id);
+    const user = await getUser(req.params.id as number);
     const camelCaseUser = toCamel(user);
     if (camelCaseUser.hcp) {
       camelCaseUser.hcp /= 10;

@@ -9,6 +9,7 @@ import establishmentRoute from './routes/establishmentRoute';
 import courseRoute from './routes/courseRoute';
 import holeRoute from './routes/holeRoute';
 import teeRoute from './routes/teeRoute';
+import holeLenghtRoute from './routes/holeLenghtRoute';
 
 const router = express.Router();
 
@@ -27,5 +28,5 @@ router.use('/establishment', establishmentRoute);
 router.use('/course', courseRoute);
 router.use('/hole', holeRoute);
 router.use('/tee', teeRoute);
-
+router.use('/hole-length', holeLenghtRoute);
 export default router;
