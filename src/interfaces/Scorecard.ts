@@ -3,14 +3,17 @@ import { RowDataPacket } from 'mysql2';
 import { User } from './User';
 import { Tee } from './Tee';
 
+import { HoleStats } from './HoleStats';
+
 interface Scorecard {
-  scorecardId: number;
+  scorecardId?: number;
   teeId: number | Tee;
   userId: number | User;
   scorecardDate: Date;
-  totalScore: number;
+  totalScore?: number;
   typeOfRound: 'practice' | 'competition';
-  createdAt: Date;
+  createdAt?: Date;
+  holeStats?: HoleStats[];
 }
 
 interface GetScorecard extends RowDataPacket, Scorecard {}

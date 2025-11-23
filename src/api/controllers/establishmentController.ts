@@ -51,7 +51,6 @@ const establishmentGetByLocation = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.params.lat, req.params.lng);
     const establishment = await getEstablishmentByLocation(
       req.params.lng,
       req.params.lat

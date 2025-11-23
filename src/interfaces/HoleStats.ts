@@ -1,18 +1,20 @@
 import { RowDataPacket } from 'mysql2';
 import { Scorecard } from './Scorecard';
 import { Hole } from './Hole';
+import { Shot } from './Shot';
 
 interface HoleStats {
-  holeStatsId: number;
+  holeStatsId?: number;
   holeId: number | Hole;
   scorecardId: number | Scorecard;
-  score: number;
-  fairwayHit: boolean;
-  greenInRegulation: boolean;
-  putts: number;
+  score?: number;
+  fairwayHit?: boolean;
+  greenInRegulation?: boolean;
+  putts?: number;
   penaltyStrokes?: number;
   sandSave?: boolean;
   upAndDown?: boolean;
+  shots?: Shot[];
 }
 
 interface GetHoleStats extends RowDataPacket, HoleStats {}

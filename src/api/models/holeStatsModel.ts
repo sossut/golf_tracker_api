@@ -36,6 +36,22 @@ const getHoleStats = async (id: number): Promise<HoleStats> => {
 
 const postHoleStats = async (data: PostHoleStats) => {
   const snakeData = toSnake(data);
+  const sql = promisePool.format(
+    `INSERT INTO hole_stats (hole_id, scorecard_id, score, fairway_hit, green_in_regulation, putts, penalty_strokes, sand_save, up_and_down)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      snakeData.hole_id,
+      snakeData.scorecard_id,
+      snakeData.score,
+      snakeData.fairway_hit,
+      snakeData.green_in_regulation,
+      snakeData.putts,
+      snakeData.penalty_strokes,
+      snakeData.sand_save,
+      snakeData.up_and_down
+    ]
+  );
+  console.log(sql);
   const [headers] = await promisePool.execute<ResultSetHeader>(
     `INSERT INTO hole_stats (hole_id, scorecard_id, score, fairway_hit, green_in_regulation, putts, penalty_strokes, sand_save, up_and_down)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,

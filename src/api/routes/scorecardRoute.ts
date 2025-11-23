@@ -16,7 +16,6 @@ router
   .get(passport.authenticate('jwt', { session: false }), scorecardListGet)
   .post(
     passport.authenticate('jwt', { session: false }),
-    body('userId').isNumeric().notEmpty().escape(),
     body('teeId').isNumeric().notEmpty().escape(),
     body('scorecardDate').isISO8601().toDate().notEmpty().escape(),
     body('typeOfRound').isString().isLength({ max: 50 }).optional().escape(),

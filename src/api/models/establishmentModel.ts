@@ -87,7 +87,6 @@ const getEstablishmentByLocation = async (
     GROUP BY establishments.establishment_id`,
     [Number(longitude), Number(latitude)]
   );
-  console.log(sql);
   const [rows] = await promisePool.execute<GetEstablishment[]>(sql);
   if (rows.length === 0) {
     throw new CustomError('Establishment not found', 404);

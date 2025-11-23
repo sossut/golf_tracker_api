@@ -7,9 +7,17 @@ import {
   getScorecard
 } from '../models/scorecardModel';
 import { Request, Response, NextFunction } from 'express';
-import { PostScorecard, PutScorecard } from '../../interfaces/Scorecard';
+import {
+  PostScorecard,
+  PutScorecard,
+  Scorecard
+} from '../../interfaces/Scorecard';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
+import { postHoleStats } from '../models/holeStatsModel';
+import { postShot } from '../models/shotModel';
+import { User } from '../../interfaces/User';
+import { toCamel } from '../../utils/utilities';
 
 const scorecardListGet = async (
   req: Request,
@@ -55,11 +63,43 @@ const scorecardPost = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    const insertId = await postScorecard(req.body);
-    if (insertId) {
+    const user = toCamel(req.user as any) as User;
+    const newScorecard: Scorecard = {
+      userId: user.userId,
+      teeId: req.body.teeId,
+      scorecardDate: req.body.scorecardDate,
+      typeOfRound: req.body.typeOfRound
+    };
+
+    const newScorecardId = await postScorecard(newScorecard);
+    console.log('new scorecard id', newScorecardId);
+    const holeStats = req.body.holeStats || [];
+    if (newScorecardId) {
+      for (const holeStat of holeStats) {
+        console.log(holeStat);
+        const newHoleStat = {
+          ...holeStat,
+          scorecardId: newScorecardId,
+          createdAt: new Date()
+        };
+        const newHoleStatsId = await postHoleStats(newHoleStat);
+        console.log(`New hole stats ID: ${newHoleStatsId}`);
+        if (newHoleStatsId) {
+          const shots = holeStat.shots || [];
+          for (const shot of shots) {
+            const newShot = {
+              ...shot,
+              holeStatsId: newHoleStatsId,
+              createdAt: new Date()
+            };
+            const newShotId = await postShot(newShot);
+            console.log(`New shot ID: ${newShotId}`);
+          }
+        }
+      }
       const message: MessageResponse = {
         message: 'Scorecard created',
-        id: insertId
+        id: newScorecardId
       };
       res.json(message);
     }

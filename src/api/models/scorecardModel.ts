@@ -34,15 +34,29 @@ const getScorecard = async (id: number): Promise<Scorecard> => {
 };
 const postScorecard = async (data: PostScorecard) => {
   const snakeData = toSnake(data);
-  const [headers] = await promisePool.execute<ResultSetHeader>(
-    `INSERT INTO scorecards (user_id, tee_id, scorecard_date, type_of_round, total_score)
-    VALUES (?, ?, ?, ?, ?)`,
+  snakeData.scorecard_date = new Date(snakeData.scorecard_date)
+    .toISOString()
+    .slice(0, 19)
+    .replace('T', ' ');
+  const sql = promisePool.format(
+    `INSERT INTO scorecards (user_id, tee_id, scorecard_date, type_of_round)
+    VALUES (?, ?, ?, ?)`,
     [
       snakeData.user_id,
       snakeData.tee_id,
       snakeData.scorecard_date,
-      snakeData.type_of_round,
-      snakeData.total_score
+      snakeData.type_of_round
+    ]
+  );
+  console.log(sql);
+  const [headers] = await promisePool.execute<ResultSetHeader>(
+    `INSERT INTO scorecards (user_id, tee_id, scorecard_date, type_of_round)
+    VALUES (?, ?, ?, ?)`,
+    [
+      snakeData.user_id,
+      snakeData.tee_id,
+      snakeData.scorecard_date,
+      snakeData.type_of_round
     ]
   );
   return headers.insertId;
