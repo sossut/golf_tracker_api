@@ -18,8 +18,8 @@ const teeListGet = async (req: Request, res: Response, next: NextFunction) => {
     const tees = await getAllTees();
     const camelCaseTees = tees.map((tee) => toCamel(tee));
     camelCaseTees.forEach((tee) => {
-      if (tee.slopeRating) {
-        tee.slopeRating /= 10;
+      if (tee.courseRating) {
+        tee.courseRating /= 10;
       }
     });
     res.json(camelCaseTees);
@@ -36,10 +36,10 @@ const teeGet = async (
   try {
     const tee = await getTee(Number(req.params.id));
     const camelCase = toCamel(tee);
-    if (camelCase.slopeRating) {
-      camelCase.slopeRating /= 10;
+    if (camelCase.courseRating) {
+      camelCase.courseRating /= 10;
     }
-    console.log(camelCase.slopeRating);
+    console.log(camelCase.courseRating);
     if (!tee) {
       throw new CustomError('Tee not found', 404);
     }
@@ -80,7 +80,7 @@ const teePost = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    req.body.slopeRating *= 10;
+    req.body.courseRating *= 10;
     const insertId = await postTee(req.body);
     if (insertId) {
       const message: MessageResponse = {
@@ -112,8 +112,8 @@ const teePut = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    if (req.body.slopeRating) {
-      req.body.slopeRating *= 10;
+    if (req.body.courseRating) {
+      req.body.courseRating *= 10;
     }
     const affectedRows = await putTee(Number(req.params.id), req.body);
     if (affectedRows) {

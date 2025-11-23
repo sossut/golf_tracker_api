@@ -10,6 +10,8 @@ import courseRoute from './routes/courseRoute';
 import holeRoute from './routes/holeRoute';
 import teeRoute from './routes/teeRoute';
 import holeLenghtRoute from './routes/holeLenghtRoute';
+import scorecardRoute from './routes/scorecardRoute';
+import typeOfShotRoute from './routes/typeOfShotRoute';
 
 const router = express.Router();
 
@@ -29,4 +31,7 @@ router.use('/course', courseRoute);
 router.use('/hole', holeRoute);
 router.use('/tee', teeRoute);
 router.use('/hole-length', holeLenghtRoute);
+router.use('/scorecard', scorecardRoute);
+router.use('/type-of-shot', typeOfShotRoute);
+
 export default router;

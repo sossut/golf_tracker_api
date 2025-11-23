@@ -2,6 +2,7 @@ import { RowDataPacket } from 'mysql2';
 import { HoleStats } from './HoleStats';
 import { Club } from './Club';
 import { TypeOfShot } from './TypeOfShot';
+import { Point } from 'geojson';
 
 interface Shot {
   shotId: number;
@@ -9,9 +10,11 @@ interface Shot {
   clubId: number | Club;
   leftMiddleRight: 'left' | 'middle' | 'right';
   shortCenterLong: 'short' | 'center' | 'long';
-  typeOfShot: number | TypeOfShot;
-  locationStart: string;
-  locationEnd: string;
+  typeOfShotId: number | TypeOfShot;
+  locationStart: Point;
+  locationEnd: Point;
+  inHole: boolean;
+  shotNumber: number;
 }
 
 interface GetShot extends RowDataPacket, Shot {}

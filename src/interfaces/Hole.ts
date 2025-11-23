@@ -8,7 +8,7 @@ interface Hole {
   holeNumber: number;
   courseId: number | Course;
   greenCenterLocation?: Point;
-  slopeIndex: number;
+  handicap: number;
   lengths: HoleLength[];
 }
 

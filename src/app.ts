@@ -7,7 +7,6 @@ import cors from 'cors';
 import * as middlewares from './middlewares';
 import api from './api';
 import MessageResponse from './interfaces/MessageResponse';
-import { Point } from 'geojson';
 
 const app = express();
 const corsOptions = {
@@ -31,10 +30,5 @@ app.use('/api/v1', api);
 
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
-const point: Point = {
-  type: 'Point',
-  coordinates: [-74.006, 40.7128]
-};
-console.log(point.coordinates);
 
 export default app;

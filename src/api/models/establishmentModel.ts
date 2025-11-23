@@ -65,6 +65,40 @@ const getEstablishment = async (id: number): Promise<Establishment> => {
   }));
   return establishments[0];
 };
+const getEstablishmentByLocation = async (
+  longitude: string,
+  latitude: string
+): Promise<Establishment> => {
+  const sql = promisePool.format(
+    `SELECT establishments.establishment_id, establishment_name,
+    location, abbreviation, establishment_number,
+    CONCAT('[',
+      GROUP_CONCAT(
+        JSON_OBJECT(
+          'course_id', courses.course_id,
+          'course_name', courses.course_name,
+          'scorecard', courses.scorecard
+          )
+      ),
+    ']') AS courses
+      FROM establishments
+    LEFT JOIN courses ON establishments.establishment_id = courses.establishment_id
+    WHERE ST_Distance_Sphere(location, POINT(?, ?)) < 1000
+    GROUP BY establishments.establishment_id`,
+    [Number(longitude), Number(latitude)]
+  );
+  console.log(sql);
+  const [rows] = await promisePool.execute<GetEstablishment[]>(sql);
+  if (rows.length === 0) {
+    throw new CustomError('Establishment not found', 404);
+  }
+  const establishments = rows.map((row) => ({
+    ...row,
+    courses: JSON.parse(row.courses?.toString() || '{}')
+  }));
+  return establishments[0];
+};
+
 const postEstablishment = async (data: PostEstablishment) => {
   const location: Point = {
     type: 'Point',
@@ -130,6 +164,7 @@ const deleteEstablishment = async (id: number): Promise<boolean> => {
 export {
   getAllEstablishments,
   getEstablishment,
+  getEstablishmentByLocation,
   postEstablishment,
   putEstablishment,
   deleteEstablishment

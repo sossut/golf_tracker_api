@@ -2,6 +2,7 @@ import express from 'express';
 import {
   establishmentDelete,
   establishmentGet,
+  establishmentGetByLocation,
   establishmentListGet,
   establishmentPost,
   establishmentPut
@@ -38,4 +39,13 @@ router
     param('id').isNumeric().notEmpty().escape(),
     establishmentDelete
   );
+router
+  .route('/location/:lng/:lat')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('lat').isFloat().notEmpty().escape(),
+    param('lng').isFloat().notEmpty().escape(),
+    establishmentGetByLocation
+  );
+
 export default router;

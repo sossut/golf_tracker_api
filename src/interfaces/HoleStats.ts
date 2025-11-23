@@ -11,8 +11,8 @@ interface HoleStats {
   greenInRegulation: boolean;
   putts: number;
   penaltyStrokes?: number;
-  sandSave: boolean;
-  upAndDown: boolean;
+  sandSave?: boolean;
+  upAndDown?: boolean;
 }
 
 interface GetHoleStats extends RowDataPacket, HoleStats {}

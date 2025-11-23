@@ -1,44 +1,43 @@
 import { validationResult } from 'express-validator';
 import {
-  postHoleLength,
-  deleteHoleLength,
-  putHoleLength,
-  getAllHoleLengths,
-  getHoleLength
-} from '../models/holeLengthModel';
+  postTypeOfShot,
+  deleteTypeOfShot,
+  putTypeOfShot,
+  getAllTypeOfShots,
+  getTypeOfShot
+} from '../models/typeOfShotModel';
 import { Request, Response, NextFunction } from 'express';
-import { PostHoleLength, PutHoleLength } from '../../interfaces/HoleLength';
+import { PostTypeOfShot, PutTypeOfShot } from '../../interfaces/TypeOfShot';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
 
-const holeLengthListGet = async (
+const typeOfShotListGet = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const holeLengths = await getAllHoleLengths();
-    res.json(holeLengths);
+    const typeOfShots = await getAllTypeOfShots();
+    res.json(typeOfShots);
   } catch (error) {
     next(error);
   }
 };
-
-const holeLengthGet = async (
+const typeOfShotGet = async (
   req: Request<{ id: number }, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const holeLength = await getHoleLength(Number(req.params.id));
-    res.json(holeLength);
+    const typeOfShot = await getTypeOfShot(req.params.id);
+    res.json(typeOfShot);
   } catch (error) {
     next(error);
   }
 };
 
-const holeLengthPost = async (
-  req: Request<{}, {}, PostHoleLength>,
+const typeOfShotPost = async (
+  req: Request<{}, {}, PostTypeOfShot>,
   res: Response,
   next: NextFunction
 ) => {
@@ -55,22 +54,21 @@ const holeLengthPost = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-
-    const newHoleLengthId = await postHoleLength(req.body);
-    if (newHoleLengthId) {
+    const insertId = await postTypeOfShot(req.body);
+    if (insertId) {
       const message: MessageResponse = {
-        message: 'hole length created',
-        id: newHoleLengthId
+        message: 'Type of shot created',
+        id: insertId
       };
-      res.json(message);
+      res.status(201).json(message);
     }
   } catch (error) {
     next(error);
   }
 };
 
-const holeLengthPut = async (
-  req: Request<{ id: number }, {}, PutHoleLength>,
+const typeOfShotPut = async (
+  req: Request<{ id: number }, {}, PutTypeOfShot>,
   res: Response,
   next: NextFunction
 ) => {
@@ -87,10 +85,10 @@ const holeLengthPut = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    const result = await putHoleLength(req.body, Number(req.params.id));
-    if (result) {
+    const affectedRows = await putTypeOfShot(req.body, req.params.id);
+    if (affectedRows) {
       const message: MessageResponse = {
-        message: 'hole length updated',
+        message: 'Type of shot updated',
         id: req.params.id
       };
       res.json(message);
@@ -100,7 +98,7 @@ const holeLengthPut = async (
   }
 };
 
-const holeLengthDelete = async (
+const typeOfShotDelete = async (
   req: Request<{ id: number }, {}, {}>,
   res: Response,
   next: NextFunction
@@ -118,11 +116,11 @@ const holeLengthDelete = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    const result = await deleteHoleLength(Number(req.params.id));
-    if (result) {
+    const affectedRows = await deleteTypeOfShot(req.params.id);
+    if (affectedRows) {
       const message: MessageResponse = {
-        message: 'hole length deleted',
-        id: Number(req.params.id)
+        message: 'Type of shot deleted',
+        id: req.params.id
       };
       res.json(message);
     }
@@ -130,10 +128,11 @@ const holeLengthDelete = async (
     next(error);
   }
 };
+
 export {
-  holeLengthListGet,
-  holeLengthGet,
-  holeLengthPost,
-  holeLengthPut,
-  holeLengthDelete
+  typeOfShotListGet,
+  typeOfShotGet,
+  typeOfShotPost,
+  typeOfShotPut,
+  typeOfShotDelete
 };

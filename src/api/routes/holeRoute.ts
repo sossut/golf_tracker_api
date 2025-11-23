@@ -4,6 +4,7 @@ import {
   holeGet,
   holeListGet,
   holePost,
+  holePostMulti,
   holePut
 } from '../controllers/holeController';
 
@@ -19,7 +20,7 @@ router
     passport.authenticate('jwt', { session: false }),
     body('courseId').isNumeric().notEmpty().escape(),
     body('holeNumber').isNumeric().notEmpty().escape(),
-    body('slopeIndex').isNumeric().notEmpty().escape(),
+    body('handicap').isNumeric().notEmpty().escape(),
     holePost
   );
 router
@@ -30,7 +31,7 @@ router
     param('id').isNumeric().notEmpty().escape(),
     body('courseId').isNumeric().optional({ nullable: true }).escape(),
     body('holeNumber').isNumeric().optional({ nullable: true }).escape(),
-    body('slopeIndex').isNumeric().optional({ nullable: true }).escape(),
+    body('handicap').isNumeric().optional({ nullable: true }).escape(),
     holePut
   )
   .delete(
@@ -38,4 +39,8 @@ router
     param('id').isNumeric().notEmpty().escape(),
     holeDelete
   );
+
+router
+  .route('/multi')
+  .post(passport.authenticate('jwt', { session: false }), holePostMulti);
 export default router;

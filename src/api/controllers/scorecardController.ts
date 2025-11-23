@@ -1,44 +1,44 @@
 import { validationResult } from 'express-validator';
 import {
-  postHoleLength,
-  deleteHoleLength,
-  putHoleLength,
-  getAllHoleLengths,
-  getHoleLength
-} from '../models/holeLengthModel';
+  postScorecard,
+  deleteScorecard,
+  putScorecard,
+  getAllScorecards,
+  getScorecard
+} from '../models/scorecardModel';
 import { Request, Response, NextFunction } from 'express';
-import { PostHoleLength, PutHoleLength } from '../../interfaces/HoleLength';
+import { PostScorecard, PutScorecard } from '../../interfaces/Scorecard';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
 
-const holeLengthListGet = async (
+const scorecardListGet = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const holeLengths = await getAllHoleLengths();
-    res.json(holeLengths);
+    const scorecards = await getAllScorecards();
+    res.json(scorecards);
   } catch (error) {
     next(error);
   }
 };
 
-const holeLengthGet = async (
+const scorecardGet = async (
   req: Request<{ id: number }, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const holeLength = await getHoleLength(Number(req.params.id));
-    res.json(holeLength);
+    const scorecard = await getScorecard(req.params.id);
+    res.json(scorecard);
   } catch (error) {
     next(error);
   }
 };
 
-const holeLengthPost = async (
-  req: Request<{}, {}, PostHoleLength>,
+const scorecardPost = async (
+  req: Request<{}, {}, PostScorecard>,
   res: Response,
   next: NextFunction
 ) => {
@@ -55,12 +55,11 @@ const holeLengthPost = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-
-    const newHoleLengthId = await postHoleLength(req.body);
-    if (newHoleLengthId) {
+    const insertId = await postScorecard(req.body);
+    if (insertId) {
       const message: MessageResponse = {
-        message: 'hole length created',
-        id: newHoleLengthId
+        message: 'Scorecard created',
+        id: insertId
       };
       res.json(message);
     }
@@ -69,8 +68,8 @@ const holeLengthPost = async (
   }
 };
 
-const holeLengthPut = async (
-  req: Request<{ id: number }, {}, PutHoleLength>,
+const scorecardPut = async (
+  req: Request<{ id: number }, {}, PutScorecard>,
   res: Response,
   next: NextFunction
 ) => {
@@ -87,10 +86,10 @@ const holeLengthPut = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    const result = await putHoleLength(req.body, Number(req.params.id));
-    if (result) {
+    const insertId = await putScorecard(req.body, req.params.id);
+    if (insertId) {
       const message: MessageResponse = {
-        message: 'hole length updated',
+        message: 'Scorecard updated',
         id: req.params.id
       };
       res.json(message);
@@ -100,29 +99,29 @@ const holeLengthPut = async (
   }
 };
 
-const holeLengthDelete = async (
+const scorecardDelete = async (
   req: Request<{ id: number }, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const messages = errors
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      const messages = error
         .array()
-        .map((error) => {
-          if (error.type === 'field') {
-            return `${error.msg}: ${error.path}`;
+        .map((err) => {
+          if (err.type === 'field') {
+            return `${err.msg}: ${err.path}`;
           }
         })
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    const result = await deleteHoleLength(Number(req.params.id));
-    if (result) {
+    const insertId = await deleteScorecard(req.params.id);
+    if (insertId) {
       const message: MessageResponse = {
-        message: 'hole length deleted',
-        id: Number(req.params.id)
+        message: 'Scorecard deleted',
+        id: req.params.id
       };
       res.json(message);
     }
@@ -130,10 +129,11 @@ const holeLengthDelete = async (
     next(error);
   }
 };
+
 export {
-  holeLengthListGet,
-  holeLengthGet,
-  holeLengthPost,
-  holeLengthPut,
-  holeLengthDelete
+  scorecardListGet,
+  scorecardGet,
+  scorecardPost,
+  scorecardPut,
+  scorecardDelete
 };

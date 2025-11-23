@@ -19,7 +19,6 @@ router
     passport.authenticate('jwt', { session: false }),
     body('teeName').isString().notEmpty().escape(),
     body('courseId').isNumeric().notEmpty().escape(),
-    body('length').isNumeric().notEmpty().escape(),
     body('slopeRating').isNumeric().notEmpty().escape(),
     body('courseRating').isNumeric().notEmpty().escape(),
     teePost
@@ -32,7 +31,6 @@ router
     param('id').isNumeric().notEmpty().escape(),
     body('teeName').isString().optional({ nullable: true }).escape(),
     body('courseId').isNumeric().optional({ nullable: true }).escape(),
-    body('length').isNumeric().optional({ nullable: true }).escape(),
     body('slopeRating').isNumeric().optional({ nullable: true }).escape(),
     body('courseRating').isNumeric().optional({ nullable: true }).escape(),
     teePut

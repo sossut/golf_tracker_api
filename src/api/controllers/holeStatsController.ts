@@ -1,44 +1,44 @@
 import { validationResult } from 'express-validator';
 import {
-  postHoleLength,
-  deleteHoleLength,
-  putHoleLength,
-  getAllHoleLengths,
-  getHoleLength
-} from '../models/holeLengthModel';
+  postHoleStats,
+  deleteHoleStats,
+  putHoleStats,
+  getAllHoleStats,
+  getHoleStats
+} from '../models/holeStatsModel';
 import { Request, Response, NextFunction } from 'express';
-import { PostHoleLength, PutHoleLength } from '../../interfaces/HoleLength';
+import { PostHoleStats, PutHoleStats } from '../../interfaces/HoleStats';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
 
-const holeLengthListGet = async (
+const holeStatsListGet = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const holeLengths = await getAllHoleLengths();
-    res.json(holeLengths);
+    const holeStats = await getAllHoleStats();
+    res.json(holeStats);
   } catch (error) {
     next(error);
   }
 };
 
-const holeLengthGet = async (
+const holeStatsGet = async (
   req: Request<{ id: number }, {}, {}>,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const holeLength = await getHoleLength(Number(req.params.id));
-    res.json(holeLength);
+    const holeStats = await getHoleStats(req.params.id);
+    res.json(holeStats);
   } catch (error) {
     next(error);
   }
 };
 
-const holeLengthPost = async (
-  req: Request<{}, {}, PostHoleLength>,
+const holeStatsPost = async (
+  req: Request<{}, {}, PostHoleStats>,
   res: Response,
   next: NextFunction
 ) => {
@@ -55,12 +55,11 @@ const holeLengthPost = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-
-    const newHoleLengthId = await postHoleLength(req.body);
-    if (newHoleLengthId) {
+    const holeStatsId = await postHoleStats(req.body);
+    if (holeStatsId) {
       const message: MessageResponse = {
-        message: 'hole length created',
-        id: newHoleLengthId
+        message: 'hole stats created',
+        id: holeStatsId
       };
       res.json(message);
     }
@@ -69,8 +68,8 @@ const holeLengthPost = async (
   }
 };
 
-const holeLengthPut = async (
-  req: Request<{ id: number }, {}, PutHoleLength>,
+const holeStatsPut = async (
+  req: Request<{ id: number }, {}, PutHoleStats>,
   res: Response,
   next: NextFunction
 ) => {
@@ -87,10 +86,10 @@ const holeLengthPut = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    const result = await putHoleLength(req.body, Number(req.params.id));
-    if (result) {
+    const affectedRows = await putHoleStats(req.body, req.params.id);
+    if (affectedRows) {
       const message: MessageResponse = {
-        message: 'hole length updated',
+        message: 'hole stats updated',
         id: req.params.id
       };
       res.json(message);
@@ -100,7 +99,7 @@ const holeLengthPut = async (
   }
 };
 
-const holeLengthDelete = async (
+const holeStatsDelete = async (
   req: Request<{ id: number }, {}, {}>,
   res: Response,
   next: NextFunction
@@ -118,11 +117,11 @@ const holeLengthDelete = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
-    const result = await deleteHoleLength(Number(req.params.id));
-    if (result) {
+    const affectedRows = await deleteHoleStats(req.params.id);
+    if (affectedRows) {
       const message: MessageResponse = {
-        message: 'hole length deleted',
-        id: Number(req.params.id)
+        message: 'hole stats deleted',
+        id: req.params.id
       };
       res.json(message);
     }
@@ -130,10 +129,11 @@ const holeLengthDelete = async (
     next(error);
   }
 };
+
 export {
-  holeLengthListGet,
-  holeLengthGet,
-  holeLengthPost,
-  holeLengthPut,
-  holeLengthDelete
+  holeStatsListGet,
+  holeStatsGet,
+  holeStatsPost,
+  holeStatsPut,
+  holeStatsDelete
 };

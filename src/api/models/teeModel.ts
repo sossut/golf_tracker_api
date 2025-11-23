@@ -23,6 +23,7 @@ const getAllTees = async (): Promise<Tee[]> => {
           JSON_OBJECT(
             'hole_id', hole_lengths.hole_id,
             'hole_number', holes.hole_number,
+            'handicap', holes.handicap,
             'length', hole_lengths.length,
             'par', hole_lengths.par,
             'tee_box_location', JSON_OBJECT(
@@ -76,6 +77,7 @@ const getTee = async (id: number): Promise<Tee> => {
         JSON_OBJECT(
           'hole_id', hole_lengths.hole_id,
           'hole_number', holes.hole_number,
+          'handicap', holes.handicap,
           'length', hole_lengths.length,
           'par', hole_lengths.par,
           'tee_box_location', JSON_OBJECT(

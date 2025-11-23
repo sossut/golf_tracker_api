@@ -4,7 +4,8 @@ import {
   getEstablishment,
   postEstablishment,
   putEstablishment,
-  deleteEstablishment
+  deleteEstablishment,
+  getEstablishmentByLocation
 } from '../models/establishmentModel';
 import {
   PostEstablishment,
@@ -35,6 +36,26 @@ const establishmentGet = async (
 ) => {
   try {
     const establishment = await getEstablishment(Number(req.params.id));
+    if (!establishment) {
+      throw new CustomError('Establishment not found', 404);
+    }
+    res.json(establishment);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const establishmentGetByLocation = async (
+  req: Request<{ lng: string; lat: string }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log(req.params.lat, req.params.lng);
+    const establishment = await getEstablishmentByLocation(
+      req.params.lng,
+      req.params.lat
+    );
     if (!establishment) {
       throw new CustomError('Establishment not found', 404);
     }
@@ -132,6 +153,7 @@ const establishmentDelete = async (
 export {
   establishmentListGet,
   establishmentGet,
+  establishmentGetByLocation,
   establishmentPost,
   establishmentPut,
   establishmentDelete

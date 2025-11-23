@@ -1,10 +1,11 @@
 import { RowDataPacket } from 'mysql2';
-import { Course } from './Course';
+
 import { User } from './User';
+import { Tee } from './Tee';
 
 interface Scorecard {
   scorecardId: number;
-  courseId: number | Course;
+  teeId: number | Tee;
   userId: number | User;
   scorecardDate: Date;
   totalScore: number;
