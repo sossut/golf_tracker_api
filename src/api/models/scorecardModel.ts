@@ -83,7 +83,7 @@ LEFT JOIN (
 ) AS shot_totals ON shot_totals.scorecard_id = scorecards.scorecard_id
 
 LEFT JOIN (
-  -- build a JSON array of hole_stats (each with a nested shots JSON array)
+  
   SELECT
     t.scorecard_id,
     CONCAT('[', GROUP_CONCAT(t.hole_json ORDER BY t.hole_stats_id SEPARATOR ','), ']') AS hole_stats

@@ -10,6 +10,7 @@ import courseRoute from './routes/courseRoute';
 import holeRoute from './routes/holeRoute';
 import teeRoute from './routes/teeRoute';
 import holeLenghtRoute from './routes/holeLenghtRoute';
+import holeStatsRoute from './routes/holeStatsRoute';
 import scorecardRoute from './routes/scorecardRoute';
 import typeOfShotRoute from './routes/typeOfShotRoute';
 
@@ -31,6 +32,7 @@ router.use('/course', courseRoute);
 router.use('/hole', holeRoute);
 router.use('/tee', teeRoute);
 router.use('/hole-length', holeLenghtRoute);
+router.use('/hole-stats', holeStatsRoute);
 router.use('/scorecard', scorecardRoute);
 router.use('/type-of-shot', typeOfShotRoute);
 

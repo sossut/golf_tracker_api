@@ -23,15 +23,57 @@ const getAllHoleStats = async (): Promise<HoleStats[]> => {
 
 const getHoleStats = async (id: number): Promise<HoleStats> => {
   const [rows] = await promisePool.execute<GetHoleStats[]>(
-    `SELECT hole_stats_id, hole_id, scorecard_id, score, fairway_hit, green_in_regulation, putts, penalty_strokes, sand_save, up_and_down
-    FROM hole_stats
-    WHERE hole_stats_id = ?`,
+    `SELECT
+      hs.hole_stats_id,
+      hs.hole_id,
+      hs.scorecard_id,
+      hs.score,
+      hs.fairway_hit,
+      hs.green_in_regulation,
+      hs.putts,
+      hs.penalty_strokes,
+      hs.sand_save,
+      hs.up_and_down,
+    COALESCE(
+      CONCAT(
+        '[',
+        IFNULL(
+          (
+            SELECT GROUP_CONCAT(
+              JSON_OBJECT(
+                'shot_id', s.shot_id,
+                'shot_number', s.shot_number,
+                'club_id', s.club_id,
+                'club_name', c.club_name,
+                'left_middle_right', s.left_middle_right,
+                'type_of_shot_id', s.type_of_shot_id,
+                'location_start', JSON_OBJECT('x', ST_X(s.location_start), 'y', ST_Y(s.location_start)),
+                'location_end',   JSON_OBJECT('x', ST_X(s.location_end),   'y', ST_Y(s.location_end))
+              ) ORDER BY s.shot_number SEPARATOR ','
+            )
+            FROM shots s
+            LEFT JOIN clubs c ON s.club_id = c.club_id
+            WHERE s.hole_stats_id = hs.hole_stats_id
+            ORDER BY s.shot_number
+          ),
+          ''
+        ),
+        ']'
+      ),
+      '[]'
+    ) AS shots
+  FROM hole_stats hs
+  WHERE hs.hole_stats_id = ?`,
     [id]
   );
   if (rows.length === 0) {
     throw new CustomError('Hole stats not found', 404);
   }
-  return rows[0];
+  const holeStats = rows.map((row) => ({
+    ...row,
+    shots: JSON.parse(row.shots?.toString() || '[]')
+  }));
+  return holeStats[0];
 };
 
 const postHoleStats = async (data: PostHoleStats) => {
