@@ -76,6 +76,21 @@ const getHoleStats = async (id: number): Promise<HoleStats> => {
   return holeStats[0];
 };
 
+const getHoleStatsIdsByScorecardId = async (
+  scorecardId: number
+): Promise<number[]> => {
+  const [rows] = await promisePool.execute<GetHoleStats[]>(
+    `SELECT hole_stats_id
+    FROM hole_stats
+    WHERE scorecard_id = ?`,
+    [scorecardId]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('Hole stats not found for this scorecard', 404);
+  }
+  return rows.map((row) => row.hole_stats_id);
+};
+
 const postHoleStats = async (data: PostHoleStats) => {
   const snakeData = toSnake(data);
   const sql = promisePool.format(
@@ -145,6 +160,7 @@ const deleteHoleStats = async (id: number): Promise<boolean> => {
 export {
   getAllHoleStats,
   getHoleStats,
+  getHoleStatsIdsByScorecardId,
   postHoleStats,
   putHoleStats,
   deleteHoleStats

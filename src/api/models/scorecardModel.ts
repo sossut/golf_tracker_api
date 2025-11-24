@@ -290,6 +290,7 @@ ORDER BY scorecards.created_at DESC;`,
   });
   return scorecards[0];
 };
+
 const postScorecard = async (data: PostScorecard) => {
   const snakeData = toSnake(data);
   snakeData.scorecard_date = new Date(snakeData.scorecard_date)

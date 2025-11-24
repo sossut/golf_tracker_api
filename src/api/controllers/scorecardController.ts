@@ -14,8 +14,16 @@ import {
 } from '../../interfaces/Scorecard';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
-import { postHoleStats } from '../models/holeStatsModel';
-import { postShot } from '../models/shotModel';
+import {
+  deleteHoleStats,
+  getHoleStatsIdsByScorecardId,
+  postHoleStats
+} from '../models/holeStatsModel';
+import {
+  deleteShot,
+  getShotIdsByHoleStatsId,
+  postShot
+} from '../models/shotModel';
 import { User } from '../../interfaces/User';
 import { toCamel } from '../../utils/utilities';
 
@@ -157,6 +165,19 @@ const scorecardDelete = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
+    const holeStatsIds = await getHoleStatsIdsByScorecardId(req.params.id);
+
+    for (const holeStatsId of holeStatsIds) {
+      console.log(holeStatsId);
+      const shotIds = await getShotIdsByHoleStatsId(holeStatsId);
+
+      for (const shotId of shotIds) {
+        console.log(shotId);
+        await deleteShot(shotId);
+      }
+      await deleteHoleStats(holeStatsId);
+    }
+
     const insertId = await deleteScorecard(req.params.id);
     if (insertId) {
       const message: MessageResponse = {

@@ -32,6 +32,20 @@ const getShot = async (id: number): Promise<Shot> => {
   return rows[0];
 };
 
+const getShotIdsByHoleStatsId = async (
+  holeStatsId: number
+): Promise<number[]> => {
+  const [rows] = await promisePool.execute<GetShot[]>(
+    `SELECT shot_id FROM shots
+     WHERE hole_stats_id = ?`,
+    [holeStatsId]
+  );
+  if (rows.length === 0) {
+    throw new CustomError('Shots not found for this hole stats', 404);
+  }
+  return rows.map((row) => row.shot_id);
+};
+
 const postShot = async (data: PostShot) => {
   const locationStart: Point = {
     type: 'Point',
@@ -92,4 +106,11 @@ const deleteShot = async (id: number) => {
   return headers.affectedRows;
 };
 
-export { getAllShots, getShot, postShot, putShot, deleteShot };
+export {
+  getAllShots,
+  getShot,
+  getShotIdsByHoleStatsId,
+  postShot,
+  putShot,
+  deleteShot
+};
