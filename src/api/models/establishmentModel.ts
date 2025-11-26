@@ -19,8 +19,22 @@ const getAllEstablishments = async (): Promise<Establishment[]> => {
         JSON_OBJECT(
           'course_id', courses.course_id,
           'course_name', courses.course_name,
-          'scorecard', courses.scorecard
+          'scorecard', courses.scorecard,
+          'tees', (
+            SELECT CONCAT('[',
+              GROUP_CONCAT(
+                JSON_OBJECT(
+                'tee_id', tees.tee_id,
+                'tee_name', tees.tee_name, 
+                'slope_rating', tees.slope_rating,
+                'course_rating', tees.course_rating
+                )
+              ),
+            ']')
+            FROM tees
+            WHERE courses.course_id = tees.course_id
           )
+        )
       ),
     ']') AS courses
       FROM establishments
@@ -30,10 +44,20 @@ const getAllEstablishments = async (): Promise<Establishment[]> => {
   if (rows.length === 0) {
     throw new CustomError('No establishments found', 404);
   }
-  const establishments = rows.map((row) => ({
-    ...row,
-    courses: JSON.parse(row.courses?.toString() || '{}')
-  }));
+
+  const establishments = rows.map((row) => {
+    const courses = JSON.parse(row.courses?.toString() || '{}');
+    const tees = courses.map((course: any) => {
+      return {
+        ...course,
+        tees: JSON.parse(course.tees?.toString() || '{}')
+      };
+    });
+    return {
+      ...row,
+      courses: tees
+    };
+  });
   return establishments;
 };
 
@@ -46,9 +70,23 @@ const getEstablishment = async (id: number): Promise<Establishment> => {
         JSON_OBJECT(
           'course_id', courses.course_id,
           'course_name', courses.course_name,
-          'scorecard', courses.scorecard
+          'scorecard', courses.scorecard,
+          'tees', (
+            SELECT CONCAT('[',
+              GROUP_CONCAT(
+                JSON_OBJECT(
+                'tee_id', tees.tee_id,
+                'tee_name', tees.tee_name, 
+                'slope_rating', tees.slope_rating,
+                'course_rating', tees.course_rating
+                )
+              ),
+            ']')
+            FROM tees
+            WHERE courses.course_id = tees.course_id
           )
-      ),  
+        )
+      ),
     ']') AS courses
       FROM establishments
     LEFT JOIN courses ON establishments.establishment_id = courses.establishment_id
@@ -59,10 +97,19 @@ const getEstablishment = async (id: number): Promise<Establishment> => {
   if (rows.length === 0) {
     throw new CustomError('Establishment not found', 404);
   }
-  const establishments = rows.map((row) => ({
-    ...row,
-    courses: JSON.parse(row.courses?.toString() || '{}')
-  }));
+  const establishments = rows.map((row) => {
+    const courses = JSON.parse(row.courses?.toString() || '{}');
+    const tees = courses.map((course: any) => {
+      return {
+        ...course,
+        tees: JSON.parse(course.tees?.toString() || '{}')
+      };
+    });
+    return {
+      ...row,
+      courses: tees
+    };
+  });
   return establishments[0];
 };
 const getEstablishmentByLocation = async (
@@ -70,15 +117,29 @@ const getEstablishmentByLocation = async (
   latitude: string
 ): Promise<Establishment> => {
   const sql = promisePool.format(
-    `SELECT establishments.establishment_id, establishment_name,
+    `SELECT establishments.establishment_id, establishment_name, 
     location, abbreviation, establishment_number,
     CONCAT('[',
       GROUP_CONCAT(
         JSON_OBJECT(
           'course_id', courses.course_id,
           'course_name', courses.course_name,
-          'scorecard', courses.scorecard
+          'scorecard', courses.scorecard,
+          'tees', (
+            SELECT CONCAT('[',
+              GROUP_CONCAT(
+                JSON_OBJECT(
+                'tee_id', tees.tee_id,
+                'tee_name', tees.tee_name, 
+                'slope_rating', tees.slope_rating,
+                'course_rating', tees.course_rating
+                )
+              ),
+            ']')
+            FROM tees
+            WHERE courses.course_id = tees.course_id
           )
+        )
       ),
     ']') AS courses
       FROM establishments
@@ -91,10 +152,19 @@ const getEstablishmentByLocation = async (
   if (rows.length === 0) {
     throw new CustomError('Establishment not found', 404);
   }
-  const establishments = rows.map((row) => ({
-    ...row,
-    courses: JSON.parse(row.courses?.toString() || '{}')
-  }));
+  const establishments = rows.map((row) => {
+    const courses = JSON.parse(row.courses?.toString() || '{}');
+    const tees = courses.map((course: any) => {
+      return {
+        ...course,
+        tees: JSON.parse(course.tees?.toString() || '{}')
+      };
+    });
+    return {
+      ...row,
+      courses: tees
+    };
+  });
   return establishments[0];
 };
 
