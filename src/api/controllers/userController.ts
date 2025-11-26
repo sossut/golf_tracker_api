@@ -20,6 +20,7 @@ import {
   putUserClub
 } from '../models/userClubModel';
 import { toCamel } from '../../utils/utilities';
+import { postHcpHistory } from '../models/hcpHistoryModel';
 
 const salt = bcrypt.genSaltSync(12);
 
@@ -88,6 +89,13 @@ const userPost = async (
     req.body.password = bcrypt.hashSync(password, salt);
     console.log('userPost req.body', req.body);
     const result = await postUser(req.body);
+    const hcpHistoryData = {
+      userId: Number(result),
+      hcp: req.body.hcp,
+      hcpDate: new Date(new Date().toISOString().split('T')[0])
+    };
+    console.log({ hcpHistoryData });
+    await postHcpHistory(hcpHistoryData);
     if (result) {
       res.json({
         message: 'user added',
@@ -188,6 +196,15 @@ const userPut = async (
     delete user.clubs;
 
     const result = await putUser(user, req.params.id);
+    if (req.body.hcp) {
+      // Add new HCP history entry
+      const hcpHistoryData = {
+        userId: req.params.id,
+        hcp: req.body.hcp,
+        hcpDate: new Date(new Date().toISOString().split('T')[0])
+      };
+      await postHcpHistory(hcpHistoryData);
+    }
     if (result) {
       const message: MessageResponse = {
         message: 'user updated',
