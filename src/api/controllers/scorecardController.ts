@@ -4,7 +4,8 @@ import {
   deleteScorecard,
   putScorecard,
   getAllScorecards,
-  getScorecard
+  getScorecard,
+  getScorecardsByUserId
 } from '../models/scorecardModel';
 import { Request, Response, NextFunction } from 'express';
 import {
@@ -48,6 +49,19 @@ const scorecardGet = async (
   try {
     const scorecard = await getScorecard(req.params.id);
     res.json(scorecard);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const scorecardGetByUserId = async (
+  req: Request<{ userId: number }, {}, {}>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const scorecards = await getScorecardsByUserId(req.params.userId);
+    res.json(scorecards);
   } catch (error) {
     next(error);
   }
@@ -194,6 +208,7 @@ const scorecardDelete = async (
 export {
   scorecardListGet,
   scorecardGet,
+  scorecardGetByUserId,
   scorecardPost,
   scorecardPut,
   scorecardDelete

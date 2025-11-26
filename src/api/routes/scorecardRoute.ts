@@ -4,7 +4,8 @@ import {
   scorecardGet,
   scorecardPost,
   scorecardPut,
-  scorecardDelete
+  scorecardDelete,
+  scorecardGetByUserId
 } from '../controllers/scorecardController';
 import { body, param } from 'express-validator';
 import passport from 'passport';
@@ -46,4 +47,13 @@ router
     param('id').isInt({ gt: 0 }),
     scorecardDelete
   );
+
+router
+  .route('/user/:userId')
+  .get(
+    passport.authenticate('jwt', { session: false }),
+    param('userId').isInt({ gt: 0 }),
+    scorecardGetByUserId
+  );
+
 export default router;
