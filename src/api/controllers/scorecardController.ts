@@ -85,6 +85,37 @@ const scorecardPost = async (
         .join(', ');
       throw new CustomError(`Validation failed: ${messages}`, 400);
     }
+    const insertId = await postScorecard(req.body);
+    if (insertId) {
+      const message: MessageResponse = {
+        message: 'Scorecard created',
+        id: insertId
+      };
+      res.json(message);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const scorecardPostWholeRound = async (
+  req: Request<{}, {}, PostScorecard>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const messages = errors
+        .array()
+        .map((error) => {
+          if (error.type === 'field') {
+            return `${error.msg}: ${error.path}`;
+          }
+        })
+        .join(', ');
+      throw new CustomError(`Validation failed: ${messages}`, 400);
+    }
     const user = toCamel(req.user as any) as User;
     const newScorecard: Scorecard = {
       userId: user.userId,
@@ -210,6 +241,7 @@ export {
   scorecardGet,
   scorecardGetByUserId,
   scorecardPost,
+  scorecardPostWholeRound,
   scorecardPut,
   scorecardDelete
 };

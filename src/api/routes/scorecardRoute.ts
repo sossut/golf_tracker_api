@@ -5,7 +5,8 @@ import {
   scorecardPost,
   scorecardPut,
   scorecardDelete,
-  scorecardGetByUserId
+  scorecardGetByUserId,
+  scorecardPostWholeRound
 } from '../controllers/scorecardController';
 import { body, param } from 'express-validator';
 import passport from 'passport';
@@ -46,6 +47,16 @@ router
     passport.authenticate('jwt', { session: false }),
     param('id').isInt({ gt: 0 }),
     scorecardDelete
+  );
+
+router
+  .route('/whole-round')
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    body('teeId').isNumeric().notEmpty().escape(),
+    body('scorecardDate').isISO8601().toDate().notEmpty().escape(),
+    body('typeOfRound').isString().isLength({ max: 50 }).optional().escape(),
+    scorecardPostWholeRound
   );
 
 router
