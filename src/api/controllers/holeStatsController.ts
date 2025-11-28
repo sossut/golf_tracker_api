@@ -10,6 +10,7 @@ import { Request, Response, NextFunction } from 'express';
 import { PostHoleStats, PutHoleStats } from '../../interfaces/HoleStats';
 import CustomError from '../../classes/CustomError';
 import MessageResponse from '../../interfaces/MessageResponse';
+import { postShot } from '../models/shotModel';
 
 const holeStatsListGet = async (
   req: Request,
@@ -57,6 +58,17 @@ const holeStatsPost = async (
     }
     const holeStatsId = await postHoleStats(req.body);
     if (holeStatsId) {
+      const shots = req.body.shots || [];
+      for (const shot of shots) {
+        const newShot = {
+          ...shot,
+          holeStatsId: holeStatsId,
+          createdAt: new Date()
+        };
+        const newShotId = await postShot(newShot);
+        console.log(`New shot ID: ${newShotId}`);
+      }
+
       const message: MessageResponse = {
         message: 'hole stats created',
         id: holeStatsId
